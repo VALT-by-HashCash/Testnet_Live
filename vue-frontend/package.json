@@ -1,0 +1,44 @@
+{
+  "name": "valt-vue-frontend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3001",
+    "build": "vite build",
+    "build:staging": "vite build --mode staging",
+    "build:production": "vite build --mode production",
+    "preview": "vite preview --port 3001",
+    "preview:staging": "vite preview --port 3001 --mode staging",
+    "preview:production": "vite preview --port 3001 --mode production",
+    "lint": "eslint . --ext vue,js,jsx,cjs,mjs --fix --ignore-path .gitignore",
+    "type-check": "vue-tsc --noEmit",
+    "docker:build": "docker build -t breadcrumbs-vue-frontend .",
+    "docker:run": "docker run -p 3001:3001 breadcrumbs-vue-frontend",
+    "docker:build-staging": "docker build -t breadcrumbs-vue-frontend:staging --build-arg NODE_ENV=staging .",
+    "docker:build-production": "docker build -t breadcrumbs-vue-frontend:production --build-arg NODE_ENV=production .",
+    "analyze": "vite build --analyze",
+    "test": "vitest",
+    "serve": "npm run build && npm run preview"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cors": "^2.8.6",
+    "express": "^5.1.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/vue": "^8.1.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.21",
+    "jsdom": "^27.4.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.16",
+    "vite": "^4.5.0",
+    "vitest": "^4.0.18"
+  }
+}

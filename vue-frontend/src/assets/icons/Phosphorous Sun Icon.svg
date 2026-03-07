@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Phosphorous Sun (matrix only, transparent bg, green-turquoise fills)" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="gradGT" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#22e6a8"/>
+      <stop offset="50%" stop-color="#27d7c9"/>
+      <stop offset="100%" stop-color="#16c6f0"/>
+    </linearGradient>
+
+    <!-- core gradient now uses green/turquoise stops (no white) -->
+    <radialGradient id="core" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#bff9ea" stop-opacity="0.98"/>
+      <stop offset="45%" stop-color="#8ef6da" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#18c6f0" stop-opacity="0.85"/>
+    </radialGradient>
+
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style type="text/css"><![CDATA[
+      /* smaller characters, use gradient for fill */
+      .mchar { font-family: 'Menlo', 'Courier New', monospace; font-weight:700; fill:url(#gradGT); opacity:0.98; font-size:3px; letter-spacing:0.3px; }
+      .mchar-faint { font-family: 'Menlo', 'Courier New', monospace; fill:url(#gradGT); opacity:0.68; font-size:2.6px; letter-spacing:0.3px; }
+    ]]></style>
+
+    <!-- clip the matrix to the sun circle -->
+    <clipPath id="clipSun">
+      <circle cx="64" cy="60" r="32"/>
+    </clipPath>
+  </defs>
+
+  <!-- outer decorative ring -->
+  <circle cx="64" cy="60" r="36" fill="none" stroke="url(#gradGT)" stroke-opacity="0.18" stroke-width="2"/>
+
+  <!-- rays -->
+  <g fill="url(#gradGT)" stroke="rgba(0,0,0,0.06)" stroke-width="0.6" transform="translate(0,-2)">
+    <rect x="62" y="8" width="4" height="18" rx="2" />
+    <rect x="62" y="102" width="4" height="18" rx="2" />
+    <rect x="8" y="60" width="18" height="4" rx="2" />
+    <rect x="102" y="60" width="18" height="4" rx="2" />
+    <rect x="18" y="18" width="6" height="18" rx="3" transform="rotate(315 21 27)"/>
+    <rect x="104" y="18" width="6" height="18" rx="3" transform="rotate(45 107 27)"/>
+    <rect x="18" y="92" width="6" height="18" rx="3" transform="rotate(225 21 101)"/>
+    <rect x="104" y="92" width="6" height="18" rx="3" transform="rotate(135 107 101)"/>
+  </g>
+
+  <!-- main sun core (gradient using greens/turquoises only) -->
+  <circle cx="64" cy="60" r="22" fill="url(#core)" stroke="url(#gradGT)" stroke-width="1.6"/>
+
+  <!-- inner accent ring — use a semi-transparent turquoise instead of white -->
+  <circle cx="64" cy="60" r="12" fill="none" stroke="#9ef6df" stroke-opacity="0.55" stroke-width="1.2"/>
+
+  <!-- clipped content: matrix only (no white anywhere) -->
+  <g clip-path="url(#clipSun)">
+    <!-- Long left column: spans top -> bottom (inside sun) -->
+    <g transform="translate(36,0)">
+      <text class="mchar" x="0" y="6">1</text>
+      <text class="mchar-faint" x="0" y="12">0</text>
+      <text class="mchar" x="0" y="18">1</text>
+      <text class="mchar" x="0" y="24">1</text>
+      <text class="mchar-faint" x="0" y="30">0</text>
+      <text class="mchar" x="0" y="36">1</text>
+      <text class="mchar-faint" x="0" y="42">0</text>
+      <text class="mchar" x="0" y="48">1</text>
+      <text class="mchar-faint" x="0" y="54">1</text>
+      <text class="mchar" x="0" y="60">0</text>
+      <text class="mchar-faint" x="0" y="66">1</text>
+      <text class="mchar" x="0" y="72">0</text>
+      <text class="mchar-faint" x="0" y="78">1</text>
+    </g>
+
+    <!-- Column 2: staggered start near top-left (short) -->
+    <g transform="translate(50,8)">
+      <text class="mchar" x="0" y="0">0</text>
+      <text class="mchar-faint" x="0" y="8">1</text>
+      <text class="mchar" x="0" y="16">1</text>
+      <text class="mchar-faint" x="0" y="24">0</text>
+    </g>
+
+    <!-- Center column: longer, starts high and reaches near bottom -->
+    <g transform="translate(62,6)">
+      <text class="mchar" x="0" y="0">1</text>
+      <text class="mchar" x="0" y="6">0</text>
+      <text class="mchar-faint" x="0" y="12">1</text>
+      <text class="mchar" x="0" y="18">1</text>
+      <text class="mchar" x="0" y="24">0</text>
+      <text class="mchar-faint" x="0" y="30">0</text>
+      <text class="mchar" x="0" y="36">1</text>
+      <text class="mchar-faint" x="0" y="42">0</text>
+      <text class="mchar" x="0" y="48">1</text>
+      <text class="mchar" x="0" y="54">0</text>
+      <text class="mchar-faint" x="0" y="60">1</text>
+      <text class="mchar" x="0" y="66">0</text>
+      <text class="mchar-faint" x="0" y="72">1</text>
+    </g>
+
+    <!-- Right-center column: medium, staggered lower -->
+    <g transform="translate(74,22)">
+      <text class="mchar-faint" x="0" y="0">0</text>
+      <text class="mchar" x="0" y="7">1</text>
+      <text class="mchar" x="0" y="14">1</text>
+      <text class="mchar-faint" x="0" y="21">0</text>
+      <text class="mchar" x="0" y="28">1</text>
+    </g>
+
+    <!-- Rightmost small column: starts low (3/4 down effect) -->
+    <g transform="translate(86,44)">
+      <text class="mchar" x="0" y="0">1</text>
+      <text class="mchar-faint" x="0" y="6">0</text>
+      <text class="mchar" x="0" y="12">1</text>
+    </g>
+  </g>
+
+  <!-- sparkles now use gradient colors (no white) -->
+  <g fill="url(#gradGT)" opacity="0.95">
+    <rect x="56" y="44" width="2" height="6" rx="1"/>
+    <rect x="74" y="44" width="2" height="6" rx="1"/>
+  </g>
+</svg>

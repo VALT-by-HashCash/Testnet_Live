@@ -1,0 +1,49 @@
+*.log
+*.pot
+*.pyc
+.env
+.env.staging
+.vscode/
+/frontend/.eslintcache
+/frontend/dist
+/frontend/out
+/frontend/test-results
+/frontend/playwright-report
+__pycache__/
+local_settings.py
+diff_output.txt
+media
+celerybeat-schedule
+celerybeat.pid
+dump.rdb
+.DS_Store
+package-lock.json
+chromedriverlog.txt
+latest.dump
+AuthKey_XSMU6GCJU8.p8
+chromedriverlog.txt
+data
+# don't track virtualenv, ever!
+venv/
+vault_venv/
+.vscode
+
+# don't track node_modules because we'll be using yarn install and it will create this
+node_modules
+
+# On our project configuration, the output of the collectstatic will be stored in
+# staticfiles directory. We are ignoring files inside staticfiles but we'll track this # folder itself so that collectstatic can work on Heroku
+staticfiles/*
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+.certs
+
+# Version control system metadata
+.bzr
+.hg
+_darcs
+BitKeeper
