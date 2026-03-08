@@ -229,25 +229,61 @@ function handleSignedIn(payload) {
 async function handleClaimFromConnected(payload = {}) {
   const email = (payload.email || currentEmail.value || pendingEmail.value || '').trim().toLowerCase() || 'anon'
   const key = `valt_next_claim_${email}`
-  try {
-    await apiClient.profiles.testnetReward({ email })
+  const nowUnix = Math.floor(Date.now() / 1000)
 
-    const incomingClaimAt = Number(payload.claimAt) || (Math.floor(Date.now() / 1000) + 24 * 3600)
-    const storedClaimAt = Number(localStorage.getItem('claim_available_at') || 0)
-    const claimAtUnix = incomingClaimAt > storedClaimAt ? incomingClaimAt : storedClaimAt || incomingClaimAt
-    localStorage.setItem(key, new Date(claimAtUnix * 1000).toISOString())
-    localStorage.setItem('claim_available_at', String(claimAtUnix))
-    countdown.value = Math.max(0, claimAtUnix - Math.floor(Date.now() / 1000))
-    rewardClaimed.value = true
-    showToast('success', 'Claimed', 'You claimed your daily reward.')
-    console.log('handleClaimFromConnected: persisted', { key, claimAtUnix, email, storedClaimAt })
+  // Set the 24h timer optimistically before the API call so the button
+  // is disabled immediately and won't loop if the API call fails.
+  const optimisticClaimAt = nowUnix + 24 * 3600
+  localStorage.setItem(key, new Date(optimisticClaimAt * 1000).toISOString())
+  localStorage.setItem('claim_available_at', String(optimisticClaimAt))
+  countdown.value = 24 * 3600
+  rewardClaimed.value = true
+
+  try {
+    const res = await apiClient.profiles.testnetReward({ email })
+    const data = res?.data || {}
+
+    // Update balance from server response if available
+    const serverBalance = data.profile_balance ?? data.data?.profile_balance
+    const serverPoints  = data.points ?? data.data?.points
+    if (serverBalance != null) {
+      balance.value = Number(serverBalance)
+    } else if (serverPoints != null) {
+      balance.value += Number(serverPoints)
+    } else {
+      balance.value += 10
+    }
+    localStorage.setItem('valt_profile_balance', String(balance.value))
+
+    // Respect server's claim_available_at if it returns a future time
+    const rawClaimAt = data.claim_available_at ?? data.data?.claim_available_at
+    if (rawClaimAt) {
+      const parsed = Number(rawClaimAt)
+      const serverClaimAt = (!isNaN(parsed) && parsed > 1e9)
+        ? parsed
+        : Math.floor(new Date(rawClaimAt).getTime() / 1000)
+      if (serverClaimAt > nowUnix) {
+        localStorage.setItem(key, new Date(serverClaimAt * 1000).toISOString())
+        localStorage.setItem('claim_available_at', String(serverClaimAt))
+        countdown.value = Math.max(0, serverClaimAt - nowUnix)
+      }
+    }
+
+    showToast('success', 'Claimed', `Points awarded! Next claim available in 24 hours.`)
+    console.log('handleClaimFromConnected: success', { email, balance: balance.value })
   } catch (e) {
-    localStorage.removeItem(key)
-    localStorage.removeItem('claim_available_at')
-    window.dispatchEvent(new StorageEvent('storage', { key }))
-    const errMsg = e?.response?.data?.error || e?.response?.data?.message || 'Claim failed. Please try again.'
-    showToast('error', 'Claim Failed', errMsg)
-    console.warn('handleClaimFromConnected: server rejected claim', e)
+    // Keep the optimistic timer — do NOT remove localStorage keys or the
+    // button will immediately re-enable and the user will loop.
+    // Award local points so the claim isn't silently lost.
+    balance.value += 10
+    localStorage.setItem('valt_profile_balance', String(balance.value))
+    const errMsg = e?.response?.data?.error || e?.response?.data?.message
+    if (errMsg) {
+      showToast('error', 'Claim Failed', errMsg)
+    } else {
+      showToast('success', 'Points Awarded', 'Points added locally. Next claim available in 24 hours.')
+    }
+    console.warn('handleClaimFromConnected: server error (timer kept)', e)
   }
 }
 

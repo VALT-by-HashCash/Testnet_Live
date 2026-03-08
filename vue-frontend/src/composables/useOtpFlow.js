@@ -183,21 +183,26 @@ export function useOtpFlow({
         }
 
         currentEmail.value = pendingEmail.value
-        const claimAtFromServer = Number(data.claim_available_at || data.data?.claim_available_at) || 0
+        // Parse claim_available_at — server may return Unix int or ISO string
         const nowUnix = Math.floor(Date.now() / 1000)
-        // Only honour a server-provided future timestamp — never impose a default 24h wait
-        const claimAt = claimAtFromServer > nowUnix ? claimAtFromServer : 0
-        if (claimAt > 0) {
-          try { localStorage.setItem('claim_available_at', String(claimAt)) } catch (e) {}
-          const userKey = `valt_next_claim_${(currentEmail.value || '').trim().toLowerCase() || 'anon'}`
-          try {
-            if (!localStorage.getItem(userKey)) {
-              localStorage.setItem(userKey, new Date(claimAt * 1000).toISOString())
-            }
-          } catch (e) {}
-        } else {
-          try { localStorage.removeItem('claim_available_at') } catch (e) {}
+        const rawClaimAt = data.claim_available_at ?? data.data?.claim_available_at
+        let claimAtFromServer = 0
+        if (rawClaimAt) {
+          const asNum = Number(rawClaimAt)
+          claimAtFromServer = (!isNaN(asNum) && asNum > 1e9)
+            ? asNum
+            : Math.floor(new Date(rawClaimAt).getTime() / 1000)
         }
+        // Use server value if future, otherwise default to 24h so the
+        // Claim button doesn't immediately re-enable after sign-in.
+        const claimAt = claimAtFromServer > nowUnix ? claimAtFromServer : nowUnix + 24 * 3600
+        try { localStorage.setItem('claim_available_at', String(claimAt)) } catch (e) {}
+        const userKey = `valt_next_claim_${(currentEmail.value || '').trim().toLowerCase() || 'anon'}`
+        try {
+          if (!localStorage.getItem(userKey)) {
+            localStorage.setItem(userKey, new Date(claimAt * 1000).toISOString())
+          }
+        } catch (e) {}
         countdown.value = Math.max(0, claimAt - nowUnix)
         localStorage.setItem('valt_current_email', currentEmail.value)
         if (activeTab.value !== 'Connect') activeTab.value = 'Connect'
