@@ -397,8 +397,9 @@ function handleConnect() {
 
 function claim() {
   if (!canClaim.value) return
-  emit('claim')
-  saveNextClaim(new Date(Date.now() + 24 * 3600 * 1000), props.email || valtKey.value)
+  const email = (props.email || valtKey.value || '').trim()
+  emit('claim', { email })
+  saveNextClaim(new Date(Date.now() + 24 * 3600 * 1000), email)
   startTimer()
 }
 

@@ -110,22 +110,10 @@ axiosInstance.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case 401:
-          // Unauthorized - clear auth and potentially redirect
-          console.warn('Authentication failed, clearing stored auth data')
-          Object.values(STORAGE_KEYS).forEach(key => {
-            localStorage.removeItem(key)
-            sessionStorage.removeItem(key)
-          })
-          
-          // Broadcast auth change
-          window.dispatchEvent(new CustomEvent('breadcrumbs-auth-change', {
-            detail: { isAuthenticated: false, reason: 'unauthorized' }
-          }))
-          
-          // Only redirect if not already on auth page
-          if (!window.location.pathname.includes('/auth/') && !window.location.pathname.includes('/login')) {
-            window.location.href = '/vue/auth/login'
-          }
+          // Log but do NOT redirect — testnet uses OTP auth, not session auth.
+          // Redirecting to /vue/auth/login would send the user to a non-existent page.
+          // Let the calling component handle the 401 and show an appropriate error.
+          console.warn('Authentication failed (401):', response.config?.url)
           break
 
         case 403:
