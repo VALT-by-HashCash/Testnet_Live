@@ -66,9 +66,9 @@ describe('ConnectedDashboard.vue', () => {
       expect(wrapper.text()).toContain('—')
     })
 
-    it('shows "24:00:00hrs" when signed in with no nextClaimAt stored', () => {
+    it('shows "You can claim now" when signed in with no nextClaimAt stored', () => {
       const wrapper = mountConnectedDashboard({ signedIn: true, email: 'test@example.com' })
-      expect(wrapper.text()).toContain('24:00:00')
+      expect(wrapper.text()).toContain('You can claim now')
     })
 
     it('shows "You can claim now" when signed in and countdown has expired', () => {

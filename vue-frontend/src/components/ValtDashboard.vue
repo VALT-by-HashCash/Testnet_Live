@@ -278,15 +278,7 @@ let progressTimer = null
 onMounted(async () => {
   pendingEmail.value = localStorage.getItem('valt_pending_email') || ''
 
-  // Restore sign-in state from previous session
-  const storedEmail = localStorage.getItem('valt_current_email')
-  if (storedEmail) {
-    signedIn.value = true
-    currentEmail.value = storedEmail
-    username.value = storedEmail.split('@')[0] || storedEmail
-    const storedBalance = Number(localStorage.getItem('valt_profile_balance') || 0)
-    if (storedBalance > 0) balance.value = storedBalance
-  }
+  // Do not auto-restore signedIn from localStorage — require explicit sign-in each session
 
   const storedClaimAt = Number(localStorage.getItem('claim_available_at') || 0)
   if (storedClaimAt > 0) {

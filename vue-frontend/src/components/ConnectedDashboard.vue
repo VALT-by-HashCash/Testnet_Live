@@ -308,8 +308,7 @@ function updateRemaining() {
 
 const remainingText = computed(() => {
   if (!props.signedIn) return '—'
-  if (!nextClaimAt.value) return '24:00:00' + 'hrs'
-  if (remaining.value <= 0) return 'You can claim now'
+  if (!nextClaimAt.value || remaining.value <= 0) return 'You can claim now'
   const h = Math.floor(remaining.value / 3600)
   const m = Math.floor((remaining.value % 3600) / 60)
   const s = remaining.value % 60
@@ -321,9 +320,6 @@ const canClaim = computed(() => props.signedIn && remaining.value <= 0)
 watch(() => props.signedIn, (isSigned) => {
   if (isSigned) {
     loadNextClaim(props.email || valtKey.value)
-    if (!nextClaimAt.value) {
-      saveNextClaim(new Date(Date.now() + 24 * 3600 * 1000), props.email || valtKey.value)
-    }
     loadProfileFromStorage()
     startTimer()
   } else {
@@ -369,9 +365,6 @@ onMounted(() => {
   // always try to hydrate profile and claim state from storage on mount
   loadProfileFromStorage()
   loadNextClaim(props.email || valtKey.value)
-  if (props.signedIn && !nextClaimAt.value) {
-    saveNextClaim(new Date(Date.now() + 24 * 3600 * 1000), props.email || valtKey.value)
-  }
   if (props.signedIn) startTimer()
   window.addEventListener('storage', storageHandler)
   window.addEventListener('valt-profile-data', profileDataHandler)

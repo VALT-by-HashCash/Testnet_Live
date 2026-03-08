@@ -184,17 +184,21 @@ export function useOtpFlow({
 
         currentEmail.value = pendingEmail.value
         const claimAtFromServer = Number(data.claim_available_at || data.data?.claim_available_at) || 0
-        const defaultClaimAt = Math.floor(Date.now() / 1000) + 24 * 3600
-        const stored = Number(localStorage.getItem('claim_available_at') || 0)
-        const claimAt = Math.max(stored || 0, claimAtFromServer || 0, defaultClaimAt)
-        try { localStorage.setItem('claim_available_at', String(claimAt)) } catch (e) {}
-        const userKey = `valt_next_claim_${(currentEmail.value || '').trim().toLowerCase() || 'anon'}`
-        try {
-          if (!localStorage.getItem(userKey)) {
-            localStorage.setItem(userKey, new Date(claimAt * 1000).toISOString())
-          }
-        } catch (e) {}
-        countdown.value = Math.max(0, claimAt - Math.floor(Date.now() / 1000))
+        const nowUnix = Math.floor(Date.now() / 1000)
+        // Only honour a server-provided future timestamp — never impose a default 24h wait
+        const claimAt = claimAtFromServer > nowUnix ? claimAtFromServer : 0
+        if (claimAt > 0) {
+          try { localStorage.setItem('claim_available_at', String(claimAt)) } catch (e) {}
+          const userKey = `valt_next_claim_${(currentEmail.value || '').trim().toLowerCase() || 'anon'}`
+          try {
+            if (!localStorage.getItem(userKey)) {
+              localStorage.setItem(userKey, new Date(claimAt * 1000).toISOString())
+            }
+          } catch (e) {}
+        } else {
+          try { localStorage.removeItem('claim_available_at') } catch (e) {}
+        }
+        countdown.value = Math.max(0, claimAt - nowUnix)
         localStorage.setItem('valt_current_email', currentEmail.value)
         if (activeTab.value !== 'Connect') activeTab.value = 'Connect'
 
